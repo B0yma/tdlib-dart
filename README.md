@@ -1,5 +1,12 @@
 # tdlib-dart fork of ivk1800/tdlib
 
+A Dart wrapper for [tdlib](https://github.com/tdlib/td). 
+Contains generated schema classes of [td_api.tl](https://github.com/tdlib/td/blob/master/td/generate/scheme/td_api.tl) and a client that interacts with lib through [ffi](https://dart.dev/guides/libraries/c-interop).
+
+| Current Version |                         tdlib commit                          |                                                                 td_api.tl revision |
+|-----------------|:-------------------------------------------------------------:|-----------------------------------------------------------------------------------:|
+| 1.8.29          |                          last commit                          |   [44b548c](https://github.com/tdlib/td/blob/44b548c/td/generate/scheme/td_api.tl) |
+
 ### Table of Contents
 
 - [Example](#example)
