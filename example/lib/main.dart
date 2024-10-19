@@ -1,23 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:tdlib/td_api.dart' as td;
-import 'package:tdlib/tdlib.dart';
-import 'package:tdlib_example/telegram_service.dart';
-
-final GetIt locator = GetIt.instance;
-
-TelegramService telegramService() => locator.get();
-
-const constClientId = 1;
-
-void setupLocator() {
-  locator.registerSingleton(TelegramService());
-}
+import 'package:tdlib/td_client.dart';
 
 void main() async {
-  setupLocator();
   runApp(const MyApp());
 }
 
@@ -47,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Creating an instance of the Options class
+  /*// Creating an instance of the Options class
   final options = TdInitOptions(
     onUpdate: (update) {
       log("Update received: $update");
@@ -67,8 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
     readOnly: false,
     // Not in read-only mode
     mode: 'wasm', // Use auto mode for TDLib build 'asmjs', 'wasm', 'auto',
-  );
+  );*/
   final TextEditingController _textController = TextEditingController();
+
+  late Client client;
 
   @override
   Widget build(BuildContext context) {
@@ -85,18 +72,30 @@ class _MyHomePageState extends State<MyHomePage> {
               'Test TDLib Plugin, Client ID:',
             ),
             Text(
-              constClientId.toString(),
+              'constClientId.toString()',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             TextButton(
-              onPressed: () {
-                TdPlugin.initialize(options);
+              onPressed: () async {
+                client = Client.create();
+
+                client.updates.listen((td.TdObject event) async {
+                  print('update: ${event.toJson()}');
+                });
+                await client.initialize();
+
+                td.Ok result = client.execute<td.Ok>(const td.SetLogVerbosityLevel(newVerbosityLevel: 0));
+                print('execute result: ${result.toJson()}');
+
+                td.Updates sendResult = await client.send<td.Updates>(const td.GetCurrentState());
+                print('send result: ${sendResult.toJson()}');
+                //TdPlugin.initialize(options);
               },
               child: const Text('refreshClientId'),
             ),
             TextButton(
               onPressed: () {
-                TdPlugin.instance.tdSend(
+                /*TdPlugin.instance.tdSend(
                   constClientId,
                   const td.SetTdlibParameters(
                     useTestDc: false,
@@ -116,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     apiHash: 'dc484c30ac640e8229e94fbe986e1c0e',
                     databaseEncryptionKey: 'YXNkYXNk',
                   ),
-                );
+                );*/
               },
               child: const Text('setTdlibParameters'),
             ),
@@ -144,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    TdPlugin.instance.tdSend(
+                    /*TdPlugin.instance.tdSend(
                       constClientId,
                       td.SetAuthenticationPhoneNumber(
                         phoneNumber: _textController.text,
@@ -156,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           authenticationTokens: [],
                         ),
                       ),
-                    );
+                    );*/
                   },
                   child: const Text('login with number'),
                 ),
@@ -188,12 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    TdPlugin.instance.tdSend(
+                    /*TdPlugin.instance.tdSend(
                       constClientId,
                       td.CheckAuthenticationCode(
                         code: _textController.text,
                       ),
-                    );
+                    );*/
                   },
                   child: const Text('enter code'),
                 ),
@@ -224,12 +223,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    TdPlugin.instance.tdSend(
+                    /*TdPlugin.instance.tdSend(
                       constClientId,
                       td.CheckAuthenticationPassword(
                         password: _textController.text,
                       ),
-                    );
+                    );*/
                   },
                   child: const Text('enter password'),
                 ),
@@ -237,10 +236,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             TextButton(
               onPressed: () {
-                TdPlugin.instance.tdSend(
+                /*TdPlugin.instance.tdSend(
                   constClientId,
                   const td.GetChats(limit: 30),
-                );
+                );*/
               },
               child: const Text('GetChats'),
             ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi' as ffi;
 import 'dart:isolate';
 
@@ -19,6 +20,7 @@ class PlatformImpl implements Platform {
 
   @override
   Future<void> initialize() async {
+    log('initialize from io');
     if (_client != null) {
       throw client_error.TdError('Client already initiated!');
     }

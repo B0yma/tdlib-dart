@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../platform.dart';
 
 class PlatformImpl implements Platform {
@@ -20,6 +22,7 @@ class PlatformImpl implements Platform {
   @override
   Future<void> initialize() {
     // TODO: implement initialize
+    log('initialize from web');
     throw UnimplementedError();
   }
 
