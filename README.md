@@ -234,4 +234,10 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/tdlib/libtdjson.so" DESTINATION "${IN
 
 ### Web
 
-TBD
+- for web:
+  - Copy all files in [data/web-package](/data/web_pkg/) to `web` folder in your project.
+  - Point `tdlib.js` file in `index.html`:
+    ```html
+    <!--add this between the <body> tags -->
+    <script src="/tdweb.js" type="application/javascript"></script>
+    ```
