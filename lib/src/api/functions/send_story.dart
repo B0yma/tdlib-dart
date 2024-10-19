@@ -45,7 +45,7 @@ class SendStory extends TdFunction {
 
   /// [fromStoryFullId] Full identifier of the original story, which content was
   /// used to create the story
-  final StoryFullId fromStoryFullId;
+  final StoryFullId? fromStoryFullId;
 
   /// [isPostedToChatPage] Pass true to keep the story accessible after
   /// expiration
@@ -68,7 +68,7 @@ class SendStory extends TdFunction {
         'caption': caption?.toJson(),
         'privacy_settings': privacySettings.toJson(),
         'active_period': activePeriod,
-        'from_story_full_id': fromStoryFullId.toJson(),
+        'from_story_full_id': fromStoryFullId?.toJson(),
         'is_posted_to_chat_page': isPostedToChatPage,
         'protect_content': protectContent,
         '@type': constructor,
