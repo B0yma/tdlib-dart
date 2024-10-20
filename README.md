@@ -1,4 +1,4 @@
-# tdlib-dart fork of ivk1800/tdlib
+# tdlib-dart fork of ivk1800/tdlib and i-Naji/tdlib
 
 A Dart wrapper for [tdlib](https://github.com/tdlib/td). 
 Contains generated schema classes of [td_api.tl](https://github.com/tdlib/td/blob/master/td/generate/scheme/td_api.tl) and a client that interacts with lib through [ffi](https://dart.dev/guides/libraries/c-interop).
@@ -23,41 +23,7 @@ https://core.telegram.org/api/auth#test-accounts
 
 ### Integration example
 
-As an example of use, you can see the project [telegram-flutter](https://github.com/ivk1800/telegram-flutter).
-
-### Dart Example
-
-```dart
-import 'package:tdlib/td_client.dart';
-import 'package:tdlib/td_api.dart' as td;
-
-Future<void> main() async {
-  final Client client = Client.create();
-
-  client.updates.listen((td.TdObject event) async {
-    print('update: ${event.toJson()}');
-  });
-  await client.initialize();
-
-  td.Ok result = client.execute<td.Ok>(td.SetLogVerbosityLevel(newVerbosityLevel: 0));
-  print('execute result: ${result.toJson()}');
-
-  td.Updates sendResult = await client.send<td.Updates>(td.GetCurrentState());
-  print('send result: ${sendResult.toJson()}');
-}
-```
-
-### installation
-
-add the following code to your dependencies section in pubspec.yaml
-
-```yaml
-dependencies:
-  tdlib:
-    git:
-      url: "https://github.com/stellarNuke/tdlib-dart"
-      ref: master
-```
+As an example of use, you can see the project example
 
 ### Getting started with flutter example
 
@@ -66,20 +32,6 @@ dependencies:
    for android downnload from here => [ v1.8.31 releases](https://github.com/stellarNuke/tdlib-dart/releases/tag/v1.8.31)
    binaries.
 3. place the files in the desired platforms folder instructions below
-4. import package
-
-```dart
-import 'package:tdlib/td_client.dart';
-import 'package:tdlib/td_api.dart' as td;
-```
-
-5. create and initialize client
-
-```dart
-late final Client client;
-client = Client.create();
-await client.initialize();
-```
 
 6. listen for updates received from the client
    list of [All available update states](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_update.html)
@@ -131,7 +83,7 @@ for more info go [official tdlib getting started](https://core.telegram.org/tdli
 
 ### Prebuilt binaries
 
-The tdlib binaries is built automatically using github actions and published on the [releases page](https://github.com/ivk1800/td-json-client-prebuilt/releases/). For android downnload from here => [ v1.8.31 releases](https://github.com/stellarNuke/tdlib-dart/releases/tag/v1.8.31). Follow the instructions below for each platform to configure flutter project to use tdlib
+The tdlib binaries is built automatically using github actions and published on the [releases page](https://github.com/ivk1800/td-json-client-prebuilt/releases/).
 
 ### Android
 
