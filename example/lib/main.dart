@@ -38,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final TextEditingController _textController = TextEditingController();
 
   late Client client;
 
@@ -87,10 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             InputWidget(
               label: 'number',
-              onClick: () async {
+              onClick: (t) async {
                 final sendResult = await client.send(
                   td.SetAuthenticationPhoneNumber(
-                    phoneNumber: _textController.text,
+                    phoneNumber: t,
                     settings: const td.PhoneNumberAuthenticationSettings(
                       allowFlashCall: false,
                       isCurrentPhoneNumber: false,
@@ -107,10 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             InputWidget(
               label: 'enter code',
-              onClick: () async {
+              onClick: (t) async {
                 final sendResult = await client.send(
                   td.CheckAuthenticationCode(
-                    code: _textController.text,
+                    code: t,
                   ),
                 );
                 log('send result: ${sendResult.toJson()}');
@@ -119,10 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             InputWidget(
               label: 'enter password',
-              onClick: () async {
+              onClick: (t) async {
                 final sendResult = await client.send(
                   td.CheckAuthenticationPassword(
-                    password: _textController.text,
+                    password: t,
                   ),
                 );
                 log('send result: ${sendResult.toJson()}');
@@ -155,7 +154,7 @@ class InputWidget extends StatelessWidget {
 
   final String label;
   final String buttonText;
-  final VoidCallback onClick;
+  final Function(String text) onClick;
 
   final TextEditingController _textController = TextEditingController();
 
@@ -185,7 +184,7 @@ class InputWidget extends StatelessWidget {
         ),
         TextButton(
           onPressed: () async {
-            onClick();
+            onClick(_textController.text);
           },
           child: Text(buttonText),
         ),
