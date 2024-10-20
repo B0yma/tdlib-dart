@@ -242,37 +242,48 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/tdlib/libtdjson.so" DESTINATION "${IN
 # end td
 ```
 
+
 ### Web
 
-- for web:
-  - Copy all files in [data/web-package](/data/web_pkg/) to `web` folder in your project.
-  - Point `tdlib.js` file in `index.html`:
-    ```html
-    <!--add this between the <body> tags -->
-    <script src="/tdweb.js" type="application/javascript"></script>
-    ```
+1. **Copy Files:**
+   - Copy all files from the [data/web-package](/data/web_pkg/) directory to the `web` folder in your project.
 
-- modify     
-1. find file - tdweb.js
-1. find code
-```
-if ('onUpdate' in options) {
-      this.onUpdate = options.onUpdate;
-      delete options.onUpdate;
-    }
-```
-1. replace by code
-```
-if ('onUpdate' in options) {
-      this.onUpdate = function(data) {
-                options.onUpdate(JSON.stringify(data));
-              return options.onUpdate;
-          };
-      delete options.onUpdate;
-    }
-```
+2. **Update `index.html`:**
+   - Add the following script tag between the `<body>` tags in your `index.html` file:
+     ```html
+     <script src="/tdweb.js" type="application/javascript"></script>
+     ```
 
-- if has error with FS:
-1. find file - 1.<YOUR HASH>.worker.js
-1. find string - createTdwebModule.ready.FS = Module.FS;
-1. replace by string - Module.ready.FS = Module.FS;
+3. **Modify `tdweb.js`:**
+   - Locate the `tdweb.js` file in your project.
+   - Find the following code snippet:
+     ```javascript
+     if ('onUpdate' in options) {
+         this.onUpdate = options.onUpdate;
+         delete options.onUpdate;
+     }
+     ```
+   - Replace it with this updated code:
+     ```javascript
+     if ('onUpdate' in options) {
+         this.onUpdate = function(data) {
+             options.onUpdate(JSON.stringify(data));
+             return options.onUpdate;
+         };
+         delete options.onUpdate;
+     }
+     ```
+If you encounter an error related to the FS module, follow these steps:
+
+1. **Locate the Worker File:**
+   - Find the file named `1.<YOUR HASH>.worker.js`.
+
+2. **Modify the Code:**
+   - Search for the following string in the file:
+     ```javascript
+     createTdwebModule.ready.FS = Module.FS;
+     ```
+   - Replace it with this string:
+     ```javascript
+     Module.ready.FS = Module.FS;
+     ```
