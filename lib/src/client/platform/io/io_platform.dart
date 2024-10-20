@@ -7,6 +7,7 @@ import 'dart:isolate';
 import 'package:rxdart/rxdart.dart';
 
 import '../../td_error.dart' as client_error;
+import '../../td_web_init_options.dart';
 import '../platform.dart';
 import 'json_bindings.dart';
 import 'receive_isolate_data.dart';
@@ -19,7 +20,9 @@ class PlatformImpl implements Platform {
   final PublishSubject<Event> _eventsSubject = PublishSubject<Event>();
 
   @override
-  Future<void> initialize() async {
+  Future<void> initialize({
+    TdWebInitOptions? tdWebInitOptions,
+  }) async {
     log('initialize from io');
     if (_client != null) {
       throw client_error.TdError('Client already initiated!');

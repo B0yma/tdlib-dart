@@ -1,3 +1,4 @@
+import '../../td_client.dart';
 import 'client_impl.dart';
 
 import '../../td_api.dart';
@@ -12,7 +13,7 @@ abstract class Client {
   Stream<TdObject> get updates;
 
   /// Client initiation. Must be called once after creation.
-  Future<void> initialize();
+  Future<void> initialize({TdWebInitOptions? tdWebInitOptions});
 
   /// Sends a request to the TDLib. Must be called after initialization.
   Future<T> send<T extends TdObject>(TdFunction function);

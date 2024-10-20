@@ -2228,7 +2228,10 @@ function () {
     this.query_callbacks = new Map();
 
     if ('onUpdate' in options) {
-      this.onUpdate = options.onUpdate;
+      this.onUpdate = function(data) {
+                options.onUpdate(JSON.stringify(data));
+              return options.onUpdate;
+          };
       delete options.onUpdate;
     }
 

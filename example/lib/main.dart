@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tdlib/td_api.dart' as td;
@@ -35,27 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /*// Creating an instance of the Options class
-  final options = TdInitOptions(
-    onUpdate: (update) {
-      log("Update received: $update");
-      //final event = jsutil.dartify(update);
-      //print("Update received: $event");
-    },
-    instanceName: "MyTdClientInstance",
-    // Custom instance name
-    isBackground: false,
-    // Not running in the background
-    jsLogVerbosityLevel: 'debug',
-    // JavaScript log level
-    logVerbosityLevel: 3,
-    // TDLib log level
-    useDatabase: false,
-    // Use database
-    readOnly: false,
-    // Not in read-only mode
-    mode: 'wasm', // Use auto mode for TDLib build 'asmjs', 'wasm', 'auto',
-  );*/
   final TextEditingController _textController = TextEditingController();
 
   late Client client;
@@ -71,171 +53,143 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Test TDLib Plugin, Client ID:',
-            ),
-            Text(
-              'constClientId.toString()',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
             TextButton(
               onPressed: () async {
                 client = Client.create();
 
                 client.updates.listen((td.TdObject event) async {
-                  print('update: ${event.toJson()}');
+                  log('update: ${event.toJson()}');
                 });
-                await client.initialize();
-
-                td.Ok result = client.execute<td.Ok>(const td.SetLogVerbosityLevel(newVerbosityLevel: 0));
-                print('execute result: ${result.toJson()}');
-
-                td.Updates sendResult = await client.send<td.Updates>(const td.GetCurrentState());
-                print('send result: ${sendResult.toJson()}');
-                //TdPlugin.initialize(options);
+                await client.initialize(
+                  tdWebInitOptions: EnvConfig.tdWebInitOptions,
+                );
               },
-              child: const Text('refreshClientId'),
+              child: const Text('initialize'),
             ),
             TextButton(
               onPressed: () async {
-                final appDocDir = await getApplicationDocumentsDirectory();
-                final td.SetTdlibParameters params = EnvConfig.getTdlibParameters(
-                  databaseDirectory: appDocDir.path,
-                  filesDirectory: appDocDir.path,
-                );
-                final sendResult = await client.send(params);
-                print('send result: ${sendResult.toJson()}');
+                late td.SetTdlibParameters params;
+                if (kIsWeb) {
+                  params = EnvConfig.tdlibParameters(
+                    databaseDirectory: '/db',
+                    filesDirectory: '/',
+                  );
+                } else {
+                  final appDocDir = await getApplicationDocumentsDirectory();
+                  params = EnvConfig.tdlibParameters(
+                    databaseDirectory: appDocDir.path,
+                    filesDirectory: appDocDir.path,
+                  );
+                }
+                await client.send(params);
               },
               child: const Text('setTdlibParameters'),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(),
-                      ),
-                      errorStyle: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                      labelText: "number",
-                      //contentPadding: EdgeInsets.zero
+            InputWidget(
+              label: 'number',
+              onClick: () async {
+                final sendResult = await client.send(
+                  td.SetAuthenticationPhoneNumber(
+                    phoneNumber: _textController.text,
+                    settings: const td.PhoneNumberAuthenticationSettings(
+                      allowFlashCall: false,
+                      isCurrentPhoneNumber: false,
+                      allowSmsRetrieverApi: false,
+                      allowMissedCall: false,
+                      authenticationTokens: [],
+                      hasUnknownPhoneNumber: false,
                     ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final sendResult = await client.send(
-                      td.SetAuthenticationPhoneNumber(
-                        phoneNumber: _textController.text,
-                        settings: const td.PhoneNumberAuthenticationSettings(
-                          allowFlashCall: false,
-                          isCurrentPhoneNumber: false,
-                          allowSmsRetrieverApi: false,
-                          allowMissedCall: false,
-                          authenticationTokens: [],
-                          hasUnknownPhoneNumber: false,
-                        ),
-                      ),
-                    );
-                    print('send result: ${sendResult.toJson()}');
-                  },
-                  child: const Text('login with number'),
-                ),
-              ],
+                );
+                log('send result: ${sendResult.toJson()}');
+              },
+              buttonText: 'login with number',
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: TextField(
-                    maxLength: 5,
-                    controller: _textController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(),
-                      ),
-                      labelText: "code",
-                      errorStyle: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                      //contentPadding: EdgeInsets.zero
-                    ),
+            InputWidget(
+              label: 'enter code',
+              onClick: () async {
+                final sendResult = await client.send(
+                  td.CheckAuthenticationCode(
+                    code: _textController.text,
                   ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final sendResult = await client.send(
-                      td.CheckAuthenticationCode(
-                        code: _textController.text,
-                      ),
-                    );
-                    print('send result: ${sendResult.toJson()}');
-                  },
-                  child: const Text('enter code'),
-                ),
-              ],
+                );
+                log('send result: ${sendResult.toJson()}');
+              },
+              buttonText: 'enter code',
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(),
-                      ),
-                      labelText: "pass",
-                      errorStyle: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                      //contentPadding: EdgeInsets.zero
-                    ),
+            InputWidget(
+              label: 'enter password',
+              onClick: () async {
+                final sendResult = await client.send(
+                  td.CheckAuthenticationPassword(
+                    password: _textController.text,
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    /*TdPlugin.instance.tdSend(
-                      constClientId,
-                      td.CheckAuthenticationPassword(
-                        password: _textController.text,
-                      ),
-                    );*/
-                  },
-                  child: const Text('enter password'),
-                ),
-              ],
+                );
+                log('send result: ${sendResult.toJson()}');
+              },
+              buttonText: 'enter password',
             ),
             TextButton(
-              onPressed: () {
-                /*TdPlugin.instance.tdSend(
-                  constClientId,
+              onPressed: () async {
+                final sendResult = await client.send(
                   const td.GetChats(limit: 30),
-                );*/
+                );
+                log('send result: ${sendResult.toJson()}');
               },
               child: const Text('GetChats'),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class InputWidget extends StatelessWidget {
+  InputWidget({
+    super.key,
+    required this.label,
+    required this.onClick,
+    required this.buttonText,
+  });
+
+  final String label;
+  final String buttonText;
+  final VoidCallback onClick;
+
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          width: 200,
+          child: TextField(
+            controller: _textController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25.0),
+                borderSide: const BorderSide(),
+              ),
+              labelText: label,
+              errorStyle: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () async {
+            onClick();
+          },
+          child: Text(buttonText),
+        ),
+      ],
     );
   }
 }

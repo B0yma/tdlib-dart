@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:tdlib/src/client/platform/platform.dart';
 import 'package:tdlib/td_api.dart';
+import '../../td_client.dart';
 import 'td_error.dart' as client_error;
-import 'client.dart';
-import 'td_function_exception.dart';
 
 class ClientImpl implements Client {
   Platform? _platform;
@@ -65,9 +64,9 @@ class ClientImpl implements Client {
   }
 
   @override
-  Future<void> initialize() async {
+  Future<void> initialize({TdWebInitOptions? tdWebInitOptions}) async {
     assert(_state == _ClientState.created);
-    await _platform!.initialize();
+    await _platform!.initialize(tdWebInitOptions: tdWebInitOptions);
     _eventsSubscription = _platform!.events.listen((Event event) {
       if (event.extra != null) {
         _rawResultsSubject.add(event);
