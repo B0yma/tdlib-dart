@@ -251,3 +251,28 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/tdlib/libtdjson.so" DESTINATION "${IN
     <!--add this between the <body> tags -->
     <script src="/tdweb.js" type="application/javascript"></script>
     ```
+
+- modify     
+1. find file - tdweb.js
+1. find code
+```
+if ('onUpdate' in options) {
+      this.onUpdate = options.onUpdate;
+      delete options.onUpdate;
+    }
+```
+1. replace by code
+```
+if ('onUpdate' in options) {
+      this.onUpdate = function(data) {
+                options.onUpdate(JSON.stringify(data));
+              return options.onUpdate;
+          };
+      delete options.onUpdate;
+    }
+```
+
+- if has error with FS:
+1. find file - 1.<YOUR HASH>.worker.js
+1. find string - createTdwebModule.ready.FS = Module.FS;
+1. replace by string - Module.ready.FS = Module.FS;
