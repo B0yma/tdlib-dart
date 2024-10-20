@@ -7,6 +7,9 @@ Contains generated schema classes of [td_api.tl](https://github.com/tdlib/td/blo
 |-----------------|:-------------------------------------------------------------:|-----------------------------------------------------------------------------------:|
 | 1.8.29          |                          last commit                          |   [44b548c](https://github.com/tdlib/td/blob/44b548c/td/generate/scheme/td_api.tl) |
 
+### Test
+https://core.telegram.org/api/auth#test-accounts
+
 ### Table of Contents
 
 - [Example](#example)

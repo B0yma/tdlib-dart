@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tdlib/td_api.dart' as td;
 import 'package:tdlib/td_client.dart';
+
+import 'env_config.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -94,28 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('refreshClientId'),
             ),
             TextButton(
-              onPressed: () {
-                /*TdPlugin.instance.tdSend(
-                  constClientId,
-                  const td.SetTdlibParameters(
-                    useTestDc: false,
-                    useSecretChats: false,
-                    useMessageDatabase: false,
-                    useFileDatabase: false,
-                    useChatInfoDatabase: false,
-                    ignoreFileNames: false,
-                    enableStorageOptimizer: false,
-                    systemLanguageCode: 'EN',
-                    filesDirectory: '/',
-                    databaseDirectory: '/db',
-                    applicationVersion: '0.0.1',
-                    deviceModel: 'Unknown',
-                    systemVersion: 'Unknonw',
-                    apiId: 29589693,
-                    apiHash: 'dc484c30ac640e8229e94fbe986e1c0e',
-                    databaseEncryptionKey: 'YXNkYXNk',
-                  ),
-                );*/
+              onPressed: () async {
+                final appDocDir = await getApplicationDocumentsDirectory();
+                final td.SetTdlibParameters params = EnvConfig.getTdlibParameters(
+                  databaseDirectory: appDocDir.path,
+                  filesDirectory: appDocDir.path,
+                );
+                final sendResult = await client.send(params);
+                print('send result: ${sendResult.toJson()}');
               },
               child: const Text('setTdlibParameters'),
             ),
@@ -142,9 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    /*TdPlugin.instance.tdSend(
-                      constClientId,
+                  onPressed: () async {
+                    final sendResult = await client.send(
                       td.SetAuthenticationPhoneNumber(
                         phoneNumber: _textController.text,
                         settings: const td.PhoneNumberAuthenticationSettings(
@@ -153,9 +141,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           allowSmsRetrieverApi: false,
                           allowMissedCall: false,
                           authenticationTokens: [],
+                          hasUnknownPhoneNumber: false,
                         ),
                       ),
-                    );*/
+                    );
+                    print('send result: ${sendResult.toJson()}');
                   },
                   child: const Text('login with number'),
                 ),
@@ -186,13 +176,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    /*TdPlugin.instance.tdSend(
-                      constClientId,
+                  onPressed: () async {
+                    final sendResult = await client.send(
                       td.CheckAuthenticationCode(
                         code: _textController.text,
                       ),
-                    );*/
+                    );
+                    print('send result: ${sendResult.toJson()}');
                   },
                   child: const Text('enter code'),
                 ),
